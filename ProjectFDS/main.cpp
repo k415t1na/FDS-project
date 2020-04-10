@@ -16,8 +16,6 @@
 #include <fstream>
 #include <iomanip>
 
-
-
 using namespace std;
 
 class Company;
@@ -35,29 +33,14 @@ vector < Company* > Promoted_Companies;
 vector < Editor* > Editors;
 vector < pair < Editor*, Company* > > FoundApps;
 vector < User* > Users;
-vector < string > OffersAvailable {"Photography","Single App", "All apps", "All package" };
-vector < string > Apps {"PhotoEditor, Complex", "One out of 11 apps included in CC","PhotoEditor, Photoshop, Illustrator, InDesign, PremierPro, Dimension, InCopy, Spark, Capture, Comp, Bridge", "All apps + AdobeStock "};
-
-void showOA() {
-    cout << "Available Offers: \n";
-    for (unsigned int i = 0; i < OffersAvailable.size(); i++) {
-        cout << i + 1 << " - " << OffersAvailable[i] << endl;
-    }
-}
-void showApps() {
-    cout << "Apps included in the offer: \n";
-    for (unsigned int i = 0; i < Apps.size(); i++) {
-        cout << i + 1 << " - " << Apps[i] << endl;
-    }
-}
-
+void OnlineStoreMenu();
 class Company {
 public:
     Company() {
-        cName = "";
-        cAdress = "";
-        cPhone = "";
-        accessCode = "";
+        setname();
+        setadress();
+        setphone();
+        setaccesscode();
     }
 
     Company(string name, string adress, string phone, string ac) {
@@ -78,6 +61,7 @@ public:
     void setadress() {
         cout << "Enter the adress: ";
         string adress;
+        cin.ignore();
         getline(cin, adress);
         this->cAdress = adress;
     }
@@ -85,10 +69,18 @@ public:
     void setphone() {
         cout << "Enter phone number: ";
         string phone;
-        cin >> phone;
+        cin.ignore();
+        getline(cin, phone);
         this->cPhone = phone;
     }
 
+    void setaccesscode() {
+        cout << "Enter the accesscode: ";
+        string p;
+        cin >> p;
+        this->accessCode = p;
+    }
+    
     string getCode() { return accessCode; }
     string getCname() { return cName; }
     string getCadress() { return cAdress; }
@@ -96,10 +88,9 @@ public:
 
 
     void Info() {
-        cout << "Company Overall Description\n\n";
-        cout << getCname() << " is hiring\n";
-        cout << "Location: " << getCadress() << endl;
-        cout << "Phone: " << getCphone() << endl;
+        cout << " - Name: " << getCname() << endl;
+        cout << " - Location: " << getCadress() << endl;
+        cout << " - Phone: " << getCphone() << endl;
     }
 
 private:
@@ -113,81 +104,75 @@ private:
 class Editor {
 public:
     Editor() {
-        cout << "Fill the Description below: \n\n ";
-        setVersion();
-        setFormat();
         setName();
         setID();
         setOsystem();
+        setVersion();
+        setFormat();
+        
     }
 
     Editor(string NAME, string VERSION, string FORMAT, string id, string OSYSTEM) {
-        eVersion = VERSION;
-        eFormat = FORMAT;
         eName = NAME;
         ID = id;
         eOsystem = OSYSTEM;
+        eVersion = VERSION;
+        eFormat = FORMAT;
     }
-
     void setName() {
-        cout << "Name of the Editor: ";
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│    Name of the Editor:│  ";
         string n;
         cin.ignore();
         getline(cin, n);
         this->eName = n;
     }
-
-    void setVersion() {
-        cout << "Version: ";
-        string a;
-        getline(cin, a);
-        this->eVersion = a;
-    }
-
-    void setFormat() {
-        cout << "Format: ";
-        string ag;
-        cin >> ag;
-        unsigned int w = atoi(ag.c_str());
-        if (w) {
-            this->eFormat = w;
-        } else {
-            cout << "\nEnter valid format!\n";
-            setFormat(); }
-    }
-
-    void setOsystem() {
-           cout << "Operating system: ";
-           string os;
-           cin >> os;
-           unsigned int w = atoi(os.c_str());
-           if (w) {
-               this->eFormat = w;
-           } else {
-               cout << "\nEnter valid operating system!\n";
-               setOsystem(); }
-       }
-
-    void setCompany(Company* object) {
-        company = object;
-    }
-
     void setID() {
-        cout << "Enter the ID: ";
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│      Enter the ID:    │  ";
         string p;
         cin >> p;
         this->ID = p;
     }
-               //virtual functions
+    void setOsystem() {
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│   Operating system:   │  ";
+        string os;
+        cin.ignore();
+        getline(cin, os);
+        this->eOsystem=os;
+    }
+    void setVersion() {
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│        Version:       │  ";
+        string a;
+        cin.ignore();
+        getline(cin, a);
+        this->eVersion = a;
+    }
+    void setFormat() {
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│        Format:        │  ";
+        string ag;
+        cin.ignore();
+        getline(cin, ag);
+        this->eFormat=ag;
+        cout << "\t\t✂----------------------------------------------------------";
+    }
+    
+    void setCompany(Company* object) {company = object;}
+               
+    //virtual functions
     virtual void Description() {
-        cout << "Name: " << eName;
-        cout << "\nVersion: " << eVersion;
-        cout << "\nFormat: " << eFormat << endl;
-        cout << " Operating system : " << eOsystem << endl;
+        cout << " + Name: " << eName<< endl;
+        cout << " + Version: " << eVersion<< endl;
+        cout << " + Format: " << eFormat << endl;
+        cout << " + ID: "<< ID << endl;
+        cout << " + Operating system : " << eOsystem << endl;
     }
 
     virtual double getTotalPrice() = 0;
-
+    
     Company* getCompany() { return company; }
     string getEversion() { return eVersion; }
     string getEformat() { return eFormat; }
@@ -221,60 +206,58 @@ public:
                 Layers (layers){}
 
     void setOriginalSaved(){
-        cout << "Do you want the original version of the photo saved? ";
-        char solution;
-        cin>>solution;
-        switch (solution){
-            case 'a':
-            cout<<"yes"<<endl;
-            break;
-
-                case 'b':
-                cout<<"no"<<endl;
-                break;
-
-                    default:
-                    cout<<"Please select a or b"<<endl;
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│Can the user software save the original version?│  ";
+                string solution;
+                cin >> solution;
+            if (solution=="Y"|| solution=="y"){
+                this->OriginalSaved=true;
+            }
+            else if(solution=="N" || solution=="n"){
+                this->OriginalSaved=false;
+            }
+            else{cout<<"Wrong format!!\n";setOriginalSaved();}
         }
-
-        if (solution == 'a'){
-                    cout<<"The original photo cannot be saved in Simple! Try Complex \n"<<endl;
-                    //Complex;
-                    }
-                    else if (solution == 'b'){
-                        cout <<"You may proceede with Simple!" << endl;
-                        //Simple;
-                    }
-                    else {
-                        cout << "Error!"<< endl;
-                    }
-    }
-
+    
     void setColorMode() {
-        cout << "The color mode: ";
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│   The color mode:    │  ";
         string p;
         cin.ignore();
         getline(cin, p);
         this->ColorMode = p;
-
-    }
-
+        }
+    
     void setLayers() {
-        cout<< "The number of layers: ";
-        int l;
-        cin >>l;
-        this->Layers = l;
-
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│ The number of layers:│  ";
+        string l;
+        cin >> l;
+            unsigned int w = atoi(l.c_str());
+            if (w) { this->Layers = w;
+                cout << "\t\t✂----------------------------------------------------------";
+            }
+            else { cout << "\nInvalid!\n"; setLayers(); }
+       }
+    
+    double getTotalPrice(){
+        double toReturn=0;
+        toReturn+=PhotoEditor::getLayers()*10;
+        if (PhotoEditor::getOsaved()){
+            toReturn+=20;
+        }
+        return toReturn;
     }
-
+    
     void Description() {
         Editor::Description();
-        cout << " OriginalSaved or Not " << OriginalSaved << endl;
-        cout << " Select the color mode: " << ColorMode << endl;
-        cout << " The number of layers " << Layers << endl;
-        }
-
-    bool getOriginalSaved() { return OriginalSaved; }
+        cout << " + OriginalSaved or Not: " << getOriginalSaved() << endl;
+        cout << " + Color mode: " << getColorMode() << endl;
+        cout << " + The number of layers: " << getLayers() << endl;
+    }
+    
+    bool getOsaved(){return OriginalSaved;}
+    string getOriginalSaved() { if(OriginalSaved)return"Yes"; else return "No"; }
     string getColorMode() { return ColorMode; }
     int getLayers() { return Layers; }
 
@@ -287,65 +270,59 @@ private:
 class Simple : public PhotoEditor {
 public:
     Simple() {
+        setSIZE();
         setFilters();
         setFeatures();
-        setSIZE();
     }
-
+    
     Simple(string NAME, string VERSION, string id, string FORMAT, string OSYSTEM, string SIZE, bool OriginalSaved, string ColorMode, int layers, string filter, string Features) :
                 PhotoEditor(NAME, VERSION, id, FORMAT, OSYSTEM, OriginalSaved, ColorMode, layers),
                 Filters(filter),
                 SIZE (SIZE),
-                Features (Features)
-        {}
-
-    void setFilters() {
-        cout << "Enter an object to be a shape: ";
-        string t;
-        cin >> t;
-        unsigned int w = atoi(t.c_str());
-        if (w) {
-            this->Filters = w;
-            }else {
-                 cout << "\nInvalid!\n";
-                 setFilters();
-         }
-    }
-
-    void setFeatures() {
-        cout << "Features level  ";
-               string e;
-               cin >> e;
-               unsigned int w = atoi(e.c_str());
-               if (w) {
-                   this->Features = w;
-                   }else {
-                   cout << "\n Negative!\n";
-                   setFeatures(); }
-           }
-
+                Features (Features){}
 
     void setSIZE() {
-        cout << "SIZEs available:  ";
-        string t;
-        cin >> t;
-        unsigned int w = atoi(t.c_str());
-        if (w) {
-            this->SIZE = w;
-            }else {
-            cout << "\nInvalid!\n";
-            setSIZE(); }
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│         SIZE:       │  ";
+           string t;
+           cin.ignore();
+           getline(cin, t);
+           this-> SIZE = t;
+       }
+    
+    void setFilters() {
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│       Filters:       │  ";
+            string f;
+            cin.ignore();
+            getline(cin, f);
+            this-> Filters = f;
+    }
+    
+    void setFeatures() {
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│      Features:       │  ";
+            string e;
+            cin.ignore();
+            getline(cin, e);
+            this-> Features = e;
+        cout << "\t\t✂----------------------------------------------------------";
+
     }
 
     double getTotalPrice(){
-        return 10;
+        double toReturn=PhotoEditor::getTotalPrice();
+        if (Editor::getoSystem()=="iOS-Android and Windows mobile devices"){toReturn+=50;}
+        else {toReturn+=20;}
+        return toReturn;
     }
+    
     void Description() {
         PhotoEditor::Description();
-        cout << " SIZEs availbale: " << getSIZE() << endl;
-        cout << " Do you want the original saved? " << getOriginalSaved() <<endl;
-        cout << " Custom Shape of the product: " << getFilters() <<endl;
-        cout << " Features level: " << getFeatures() << endl;
+        cout << " + SIZE: " << getSIZE() << endl;
+        cout << " + Do you want the original saved? " << getOriginalSaved() <<endl;
+        cout << " + Filters: " << getFilters() <<endl;
+        cout << " + Features: " << getFeatures() << endl;
     }
 
     string getFilters() { return Filters; }
@@ -378,96 +355,88 @@ public:
                 TraceImage (traceimage),
                 Vector (_vector)
     {}
-
-
+    
     void setMobileFormat() {
-        cout << "The photos are accesible in the mobile format ";
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│The photos are accesible in the mobile format:│ ";
         string c;
-        cin >> c;
-        unsigned int w = atoi(c.c_str());
-        if (w) {
-            this->MobileFormat = w;
-            }else {
-                cout << "\nInvalid!\n"; setMobileFormat();
-                }
+        cin.ignore();
+        getline(cin, c);
+        this->MobileFormat = c;
     }
     void setPhotoMasking() {
-           cout << "Masking options: ";
-           string c;
-           cin >> c;
-           unsigned int w = atoi(c.c_str());
-           if (w) {
-               this->PhotoMasking = w;
-               }else {
-                   cout << "\nInvalid!\n"; setPhotoMasking();
-                   }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│              Masking options:                │  ";
+           string p;
+           cin.ignore();
+           getline(cin, p);
+           this->PhotoMasking = p;
        }
 
     void setPortraitCorrection() {
-        cout << "Do you want it to be PortraitCorrection? ";
-        string b;
-        cin >> b;
-        unsigned int w = atoi(b.c_str());
-        if (w) {
-            this->PortraitCorrection = w;
-            } else {
-                cout << "\nInvalid!\n"; setPortraitCorrection();
-                 }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│  Do you want the portrait correction (y/n)?  │  ";
+               string solution;
+               cin>>solution;
+        if (solution=="Y"|| solution=="y"){
+            this->PortraitCorrection=true;
+        }
+        else if(solution=="N" || solution=="n"){
+            this->PortraitCorrection=false;
+        }
+        else{cout<<"Wrong format!!\n";setPortraitCorrection();}
     }
 
+
     void setCatalog() {
-        cout << "The photos saved in the catalog: ";
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│         The photos saved in the catalog:    │  ";
         string a;
-        cin >> a;
-        unsigned int w = atoi(a.c_str());
-        if (w) {
-            this->Catalog = w;
-            } else {
-                cout << "\nInvalid!\n";
-                setCatalog();
-                }
+        cin.ignore();
+        getline(cin, a);
+        this->Catalog = a;
     }
+    
     void setTraceImage() {
-           cout << "Trace image editing:  ";
-           string t;
-           cin >> t;
-           unsigned int w = atoi(t.c_str());
-           if (w) {
-               this->TraceImage = w;
-               }else {
-                   cout << "\nInvalid!\n";
-                   setTraceImage();
-                   }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│             Trace image editing:           │  ";
+        string t;
+        cin.ignore();
+        getline(cin, t);
+        this->TraceImage = t;
        }
 
        void setVector() {
-           cout << " Vector:  ";
+           cout << "\t\t✂----------------------------------------------------------";
+           cout << "\n\t\t│                  Vector:                 │  ";
            string t;
-           cin >> t;
-           unsigned int w = atoi(t.c_str());
-           if (w) {
-               this-> Vector = w;
-               } else {
-                   cout << "\nInvalid!\n";
-                   setVector();
-                   }
+           cin.ignore();
+           getline(cin,t);
+           this->Vector = t;
+           cout << "\t\t✂----------------------------------------------------------";
+           
        }
+    
     double getTotalPrice(){
-        return 10;
+        double toReturn=PhotoEditor::getTotalPrice();
+        if (getPC()){toReturn+=30;}
+        else {toReturn+=10;}
+        return toReturn;
     }
 
     void Description() {
         PhotoEditor::Description();
-        cout << " The app accesible in the mobile format " << getMobileFormat() << endl;
-        cout << " Do you want them to be PortraitCorrection? " << getPortraitCorrection() << endl;
-        cout << " You want the original to be saved: " << getTraceImage() << endl;
-        cout << " Photos saved in the catalog: " << getVector() << endl;
-        cout << " Photo masking options: " << getPhotoMasking() <<endl;
-        cout << " Photos saved in the catalog: " << getCatalog() << endl;
+        cout << " + Accessible in mobile format:  " << getMobileFormat() << endl;
+        cout << " + PortraitCorrection? " << getPortraitCorrection() << endl;
+        cout << " + Trace image options: " << getTraceImage() << endl;
+        cout << " + Vector type: " << getVector() << endl;
+        cout << " + Photo masking options: " << getPhotoMasking() <<endl;
+        cout << " + Where are photos saved? " << getCatalog() << endl;
     }
 
+    bool getPC() {return PortraitCorrection;}
     string getMobileFormat() { return MobileFormat; }
-    bool getPortraitCorrection() { return  PortraitCorrection; }
+    string getPortraitCorrection() { if(PortraitCorrection)return "Yes"; else return "No";}
     string getCatalog() { return Catalog; }
     string getPhotoMasking() { return PhotoMasking;}
     string getTraceImage() { return TraceImage; }
@@ -500,52 +469,43 @@ public:
 
 
     void setMontage() {
-        cout << "Montage ";
-        string t;
-        cin >> t;
-        unsigned int w = atoi(t.c_str());
-        if (w) {
-            this->Montage = w;
-             }else {
-                 cout << "\nInvalid!\n";
-                 setMontage();
-                 }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│    Montage:     │  ";
+               string t;
+               cin.ignore();
+               getline(cin, t);
+               this->Montage = t;
     }
 
     void seteffects() {
-        cout << "effects ";
-        string tim;
-        cin >> tim;
-        unsigned int w = atoi(tim.c_str());
-        if (w) {
-            this->effects = w;
-            }else {
-                cout << "\nInvalid\n";
-                seteffects();
-                }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│     Effecs:     │  ";
+        string t;
+        cin.ignore();
+        getline(cin, t);
+        this->effects = t;
+        cout << "\t\t✂----------------------------------------------------------";
+
     }
 
     void setaudioformats(){
-        cout << "Audio Formats ";
-            string af;
-            cin >> af;
-            unsigned int w = atoi(af.c_str());
-            if (w) {
-                this->effects = w;
-                }else {
-                    cout << "\nInvalid\n";
-                    setaudioformats();
-                    }
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│  Audio Formats: │  ";
+            string t;
+            cin.ignore();
+            getline(cin, t);
+            this->audioformats = t;
+
         }
-       
+    
+    double getTotalPrice(){return 100;}//base price for videoeditors
 
     void Description() {
         Editor::Description();
-        cout << "montage " << getMontage() << endl;
-        cout << "effects " << geteffects() << endl;
-         cout << "What format you want to use? " << getaudioformats() <<endl;
+        cout << " + Audio formats: " << getaudioformats() <<endl;
+        cout << " + Montage: " << getMontage() << endl;
+        cout << " + Effects: " << geteffects() << endl;
     }
-
     string getMontage() { return Montage; }
     string geteffects() { return effects; }
     string getaudioformats() { return audioformats; }
@@ -571,39 +531,37 @@ public:
     {}
 
     void setMotionGraphics() {
-        cout << "Motion Graphics ";
-        string t;
-        cin >> t;
-        unsigned int w = atoi(t.c_str());
-        if (w) {
-            this->MotionGraphics = w;
-            }else {
-                cout << "\nInvalid!\n";
-                setMotionGraphics();
-                }
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│ Motion Graphics:  │  ";
+       string t;
+        cin.ignore();
+        getline(cin, t);
+        this->MotionGraphics = t;
     }
 
     void setproperties() {
-        cout << "Visual Effects";
-        string tim;
-        cin >> tim;
-        unsigned int w = atoi(tim.c_str());
-        if (w) {
-             this->properties = w;
-             }else {
-                  cout << "\nInvalid\n";
-                  setproperties();
-                  }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│   Properties:     │  ";
+        string t;
+            cin.ignore();
+            getline(cin, t);
+            this->properties = t;
+        cout << "\t\t✂----------------------------------------------------------";
+
     }
 
-    double getTotalPrice(){
-          return 10;
-      }
+   double getTotalPrice(){
+        double toReturn=VideoEditor::getTotalPrice();
+        if (getMotionGraphics().length()>20){toReturn+=25;}
+        else {toReturn+=14;}
+        return toReturn;
+    }
+
 
     void Description() {
-        Editor::Description();
-        cout << "motion grapgics " << getMotionGraphics() << endl;
-        cout << "Visual Effects " << getproperties() << endl;
+        VideoEditor::Description();
+        cout << " + Motion graphics: " << getMotionGraphics() << endl;
+        cout << " + Properties: " << getproperties() << endl;
 
     }
 
@@ -636,57 +594,54 @@ public:
     {}
 
     void setStory() {
-        cout << "Time to finish a task: ";
-        string tim;
-        cin >> tim;
-        unsigned int w = atoi(tim.c_str());
-        if (w) { this->story = w; }
-        else { cout << "\nInvalid\n"; setStory(); }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│      Story/ plot:   │  ";
+       string t;
+                 cin.ignore();
+                 getline(cin, t);
+                 this->story = t;
+    cout << "\t\t✂----------------------------------------------------------";
     }
 
     void setPlatforms() {
-        cout << "Platforms";
-        string t;
-        cin >> t;
-        unsigned int w = atoi(t.c_str());
-        if (w) {
-            this->Platforms = w;
-        }else {
-            cout << "\nInvalid!\n";
-            setPlatforms(); }
+        cout << "\n\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│      Platforms:      │  ";
+       string t;
+                 cin.ignore();
+                 getline(cin, t);
+                 this->Platforms = t;
     }
 
+
     void setTransitions() {
-        cout << "Transitions";
-        string tim;
-        cin >> tim;
-        unsigned int w = atoi(tim.c_str());
-        if (w) {
-            this->Transitions = w;
-        }else {
-            cout << "\nInvalid\n";
-            setTransitions(); }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│    Transitions:      │  ";
+           string t;
+                 cin.ignore();
+                 getline(cin, t);
+                 this->Transitions = t;
     }
 
     void setTimeline() {
-        cout << "The timeline: ";
-        string t;
-        cin >> t;
-        unsigned int w = atoi(t.c_str());
-        if (w) { this->timeline = w; }
-        else { cout << "\nInvalid!\n"; setTimeline(); }
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│     The timeline:    │  ";
+                    string t;
+                  cin.ignore();
+                  getline(cin, t);
+                  this->timeline = t;
     }
 
     double getTotalPrice(){
-          return 10;
+          double toReturn=VideoEditor::getTotalPrice();
+          return toReturn+122;
       }
 
     void Description() {
-        Editor::Description();
-        cout << "Platforms available on: " << getPlatforms() << endl;
-        cout << "Transitions " << getTransitions() << endl;
-        cout << "Story of the virtual relaity" << getStory() << endl;
-        cout << "The timeline" << getTimeline() << endl;
+        VideoEditor::Description();
+        cout << " + Platforms available on: " << getPlatforms() << endl;
+        cout << " + Transitions: " << getTransitions() << endl;
+        cout << " + Scripting: " << getStory() << endl;
+        cout << " + The timeline: " << getTimeline() << endl;
     }
 
     string getPlatforms() { return Platforms; }
@@ -709,23 +664,39 @@ public:
     User() {
         setName();
         setID();
-        setPhone();
-        setAdress();
         setBudget();
+        setAdress();
+        setPhone();
+        setGPA();
         }
 
 
-    User(string n, string id, double budget, string ad, string phone) {
+    User(string n, string id, double budget, string ad, string phone, double gpa) {
+        Name = n;
+        ID = id;
         Budget = budget;
         Adress = ad;
         Phone = phone;
-        Name = n;
-        ID = id;
+        UnGPA = gpa;
     }
 
+    void setGPA() {
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│University GPA (0 - 4.0 scale): │  ";
+        string g;
+        cin >> g;
+        double w = atoi(g.c_str());
+        if (w && w >= 0 && w <= 4) {
+            this->UnGPA = w;
+        cout << "\t\t------------------------------------------------------------";
 
+        }
+        else { cout << "\nInvalid GPA!\n"; setGPA(); }
+    }
+    
     void setName() {
-        cout << "Name: ";
+        cout << "\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│           Name:                │  ";
         string n;
         cin.ignore();
         getline(cin, n);
@@ -733,7 +704,8 @@ public:
     }
 
     void setAdress() {
-        cout << "Adress: ";
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│           Adress:              │  ";
         string a;
         cin.ignore();
         getline(cin, a);
@@ -741,38 +713,55 @@ public:
     }
 
     void setPhone() {
-        cout << "Phone Number: ";
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│       Phone Number:            │  ";
         string p;
         cin >> p;
         this->Phone = p;
     }
-
+    void setBudget() {
+          cout << "\t\t✂----------------------------------------------------------";
+          cout << "\n\t\t│           Budget:              │  ";
+          string b;
+          cin >> b;
+          unsigned int w = atoi(b.c_str());
+          if (w) { this->Budget = w; }
+          else { cout << "\nInvalid!\n"; setBudget(); }
+      }
+    
     void CreateEditors(){
-
-        cout<<"Photo (1) or Video (2) \n";
+        cout << "\n\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│     Photo (A) or Video (B):     │  ";
         string choice;
         cin>>choice;
-        if(choice=="1"){
-           CreatedEditors.push_back(new Complex());
+        if(choice=="A"){
+            cout << "\t\t✂----------------------------------------------------------";
+            cout << "\n\t\t│   Simple (a) or complex (b):    │  ";
+            string c;
+            cin>>c;
+            cout << "\t\t✂----------------------------------------------------------";
+            if(c=="a")CreatedEditors.push_back(new Simple());
+            else if(c=="b")CreatedEditors.push_back(new Complex());
+            else {
+                cout << "Invalid!"<<endl;CreateEditors();
+                
+            }
+            
         }
-        else if (choice=="2"){
-
+        else if (choice=="B"){
+            cout << "\t\t✂----------------------------------------------------------";
+            cout << "\n\t\t│Social Media (a) or Virtual Reality (b):│  ";
+            string d;
+            cin>>d;
+            cout << "\t\t✂----------------------------------------------------------";
+            if(d=="a") CreatedEditors.push_back (new SocialMedia());
+            else if(d=="b") CreatedEditors.push_back (new VirtualReality());
+            else {cout << "Incorrect!"<< endl; CreateEditors();}
         }
-        else{
-            cout<<"Invalid input!\n";
-            CreateEditors();
+        else{ cout<<"\t\tInvalid input!\n"; CreateEditors();
         }
-
     }
 
-    void setBudget() {
-        cout << "Budget: ";
-        string b;
-        cin >> b;
-        unsigned int w = atoi(b.c_str());
-        if (w) { this->Budget = w; }
-        else { cout << "\nInvalid!\n"; setBudget(); }
-    }
 
     void reduceBudget(int b) {
         Budget -= b;
@@ -780,16 +769,17 @@ public:
 
     void setCompany(Company *C) {
         comp = C;
-        hasComp = true;
+        this->hasComp = true;
     }
 
     void setID() {
-        cout << "ID: ";
+        cout << "\t\t✂----------------------------------------------------------";
+        cout << "\n\t\t│           ID:                  │  ";
         string id;
         cin >> id;
         this->ID = id;
     }
-
+ 
     bool getStatus(){return hasComp;}
 
     vector<Editor*> getCreatedEditors() { return CreatedEditors; }
@@ -798,6 +788,7 @@ public:
     double getBudget() { return Budget; }
     string getPhone() { return Phone; }
     string getName() { return Name; }
+    double getGPA() { return UnGPA; }
     string getID() { return ID; }
     Company* getCompany() { return comp; }
     bool has() { return hasComp; }
@@ -805,7 +796,8 @@ public:
 private:
     vector<Editor*> CreatedEditors;
     vector<Editor*> BoughtEditors;
-
+  
+    double UnGPA= 0;
     double Budget = 0;
     string Adress = "";
     string Phone = "";
@@ -820,85 +812,6 @@ private:
 
 
 //------------------------------------------------------------Functions------------------------------------------Functions----------------------------------------------
-
-void UserMenu() {
-    cout<< "\tUser Menu\n";
-    cout<<" 1) Login \t\t 2) Register";
-    cout<<"\nChoice: ";
-    char choice;
-    cin>>choice;
-    if(choice=='1'){
-        cout<<"First Name: ";
-        string name,id;
-        cin.ignore();
-        getline(cin,name);
-
-        cout<<"ID: ";
-        cin>>id;
-        bool loggedIn = false;
-        for(auto currUser : Users){
-            if( currUser->getName() == name && currUser->getID()==id){
-                cout<<"Successfully logged in as "<<name<<endl;
-                loggedIn = true;
-
-                if(currUser->getStatus()){
-                    cout<<"  > Current company: " << currUser->getCompany()->getCname()<<"\n";
-                }
-                else{
-                    cout<<"  > User not part of our partner Companies!\n";
-                }
-                cout << "Please make a choice...";
-                cout << "\n\n 1) Apply to Company \n 2) Buy Editor\n";
-                char choice;
-                cout<<" > ";
-                cin>>choice;
-                if(choice=='1'){ // list companies and apply
-                    int it=1;
-                    for(auto currCompany: Companies){
-                        cout<<it<<") "<<currCompany->getCname()<<endl;
-                        it++;
-                    }
-                    if(it==1){
-                        cout<<"Not promoted Companies!\n\n";
-                    }
-                }
-                else if(choice=='2'){ // list Editors and buy (compare price and budget)
-                    int it=1;
-                    for(auto currEditor: Editors){
-                        cout<<it<<") "<<currEditor->getEname()<<endl;
-                        it++;
-                    }
-                    if(it==1){
-                        cout<<"No Editors for sale!\n\n";
-                    }
-                }
-
-            }
-        }
-        if(loggedIn==false){
-            cout<<" Incorrect name or ID!\n\n";
-        }
-
-
-    }
-    else if( choice=='2'){
-        User* curr = new User();
-        Users.push_back(curr);
-        cout<<" Successfully registered!\n\n";
-        UserMenu();
-    }
-}
-
-void addCompany() {
-    cout << "Number of featured Companies: ";
-    int n;
-    cin >> n;
-    for (int i = 0; i < n; i++) {
-        Companies.push_back(new Company());
-        cout << Companies[i]->getCname() << " successfully added\n";
-    }
-}
-
 //MergeSort Algorithm to be used in the main function
 void merges(vector<Editor*>&collection, int start, int mid, int ends) {
 // temp vector of items
@@ -945,27 +858,188 @@ void mergeSort( vector<Editor*>&collection, int start, int ends) {
         merges(collection, start, mid, ends);
     }
 }
+//User Menu
+void UserMenu() {
+    
+    cout << "\n\n\t\t                     ░▒▓█ USER MENU █▓▒░                  ";
+    cout << "\n\t\t✂----------------------------------------------------------";
+    cout << "\n\t\t│         1) Login          │        2) Register         │";
+    cout << "\n\t\t│---------------------------│----------------------------│\n\n";
+    cout << "\nChoice: ";
+    
+    char choice;
+    cin>>choice;
+    
+    if(choice=='1'){
+        cout<<"\n\t\t〄 First Name: ";
+        string name,id;
+        cin.ignore();
+        getline(cin,name);
 
+        cout<<"\t\t〄 ID: ";
+        cin>>id;
+        
+        bool loggedIn = false;
+        for(auto currUser : Users){
+            if( currUser->getName() == name && currUser->getID()==id){
+                cout<<"\n\t\t\t\t\t\t\tヽ(^o^)ノ";
+                cout<<"\n\t\t\tSuccessfully logged in as "<<name<<endl;
+                loggedIn = true;
+
+                if(currUser->getStatus()){
+                    cout<<"\t\t\t\t\t > Current company: " << currUser->getCompany()->getCname()<<"\n";
+                }
+                else{
+                    cout<<"\t\t\t! User not part of our partner Companies !\n\n";
+                }
+                cout << "\n\t\t✂----------------------------------------------------------";
+                cout << "\n\t\t│    1) Apply to Company    │       2) Buy Editor        │";
+                cout << "\n\t\t│---------------------------│----------------------------│\n";
+                if(currUser->getStatus()){
+                cout << "\t\t│                     3) Add Editor                      │";
+                cout << "\n\t\t│--------------------------------------------------------│\n\n";
+
+                }
+                
+                cout<<"\nChoice: ";
+                cin>>choice;
+                while (choice!='0')
+                if(choice=='1'){ // list companies and apply
+                    int it=1;
+                    for(auto currCompany: Companies){
+                        cout<<"\t\t\t\t"<<it<<"> "<<currCompany->getCname()<<"\n";
+                        it++;
+                    }
+                     
+                    if(it==1){
+                        cout<<"\n\t\t\tNot promoted Companies!\n\n";
+                    }
+                    else{
+                        cout<<"\nSelect a company to apply 〢 ";
+                        int choice;
+                        cin>>choice;
+                        auto currCompany = Companies[choice-1];
+                        cout<<"\n\t\t ↬ We reviewed your data..."<< endl;
+                        bool accepted = false;
+                        if(currUser->getGPA()>=3.0)accepted=true;
+                        if(accepted){
+                            cout<<"\t\t ⇢ Congratulations you are now part of "<<currCompany->getCname()<<" family!\n";
+                            cout<<"\t\t\tPlease log in again!\n\n";
+                            currUser->setCompany(currCompany);
+                            UserMenu();
+                            
+                        }
+                        else{
+                            cout<<"\t\t ⇢ Verdict: Rejected!\n";
+                            UserMenu();
+                        }
+                        
+                    }
+                }
+                
+                else if(choice=='2'){ // list Editors and buy (compare price and budget)
+                    int it=1;
+                    mergeSort(Editors, 0,(int) Editors.size()-1);
+                    for(auto currEditor: Editors){
+                        cout<<setw(18)<<it<<"- "<<currEditor->getEname()<<"\t\t\t $"<<currEditor->getTotalPrice()<<endl;
+                        it++;
+                    }
+                    
+                    if(it==1){cout<<"\n\t\t\tNo Editors for sale!\n\n"; }
+                    else{
+                        int choice;
+                        do{
+                            cout<<"\nCurrent budget: $ "<<currUser->getBudget()<<endl;
+                            cout<<"Choice: ";cin>>choice;
+                            
+                        }
+                        while ( choice<1 && choice>=(int)Editors.size());
+                        
+                            
+                        auto currentEditor=Editors[choice-1];
+                        if (currUser->getBudget()>=currentEditor->getTotalPrice()){
+                            cout<<"\t\t✎"<<currentEditor->getEname()<<" successfully purchased!\n\n";
+                            
+                            currUser->reduceBudget(currentEditor->getTotalPrice());
+                            cout<< "\t\t$ "<<currUser->getBudget() << " dollars remaining in your account!\n";
+                            UserMenu();
+                        }
+                        else { cout<<"Not enough budget to buy editor :(\n\n";}
+                    }
+                }
+                
+                else if(choice=='3'){
+                    currUser->CreateEditors();
+                    UserMenu();
+                }
+            }
+        }
+        if(loggedIn==false){
+            cout<<setw(40)<<"\n\n\t\t\t\t\t\t\t\t (｡●́‿●̀｡)";
+            cout<<setw(40)<<"\n\t\t\t\t\t\t\t !! Incorrect name or ID !!\n";
+        }
+    }
+    
+    else if( choice=='2'){
+        User* curr = new User();
+        Users.push_back(curr);
+        cout<<setw(46)<<"\n\n\t\t\t\t\t\t\t\t\t (｡●́‿●̀｡)";
+        cout<<setw(40)<<"\n\t\t\t\t\t\t\t Successfully registered! \n\n\n";
+        ofstream o;
+        string toAppend="";
+        toAppend+=curr->getName()+",";
+        toAppend+=curr->getID()+",";
+        toAppend+=to_string(curr->getBudget())+",";
+        toAppend+=curr->getAdress()+",";
+        toAppend+=curr->getPhone()+",";
+        toAppend+=curr->getGPA();
+        o.open("Users.txt",ios_base::app);
+        o<<toAppend;
+        o.close();
+        UserMenu();
+        
+    }
+}
+
+
+void CompanyInfo () {
+    if (Companies.size() == 0) { cout << "\n  Not available Companies\n\n"; }
+    else { cout << "\n\t\t\tThe Companies, sorted based on their first letter, are: " << endl;
+        cout << "\t\t\t\t  Select a Company to get the Description:\n\n";
+            for (unsigned int q = 0; q < Companies.size(); q++) {
+                cout <<"\t\t\t"<< q + 1 << " - " << Companies[q]->getCname() << endl;
+            }
+            cout << "\nChoice: ";
+            string c;
+            cin >> c;
+
+            unsigned int w = atoi(c.c_str());
+            if (w && w <= Companies.size()) {
+                cout << "Displaying Description...\n\n";
+                Companies[w - 1]->Info();
+            }
+
+            else { cout << "\nInvalid command!\n\n"; CompanyInfo(); }
+    }
+}
 void EditorsInfo() {
     if (Editors.size() == 0) { cout << "\n  Not available Editors\n\n"; }
     else {
        // quickSort(PhotoEditors, 0, PhotoEditors.size() - 1);
-        cout << "The Editor, sorted based on their price, are:\n " << endl;
+        cout << "\n\t\t\tThe Editors, sorted based on their price, are: " << endl;
         mergeSort(Editors,0,(int)Editors.size()-1);//calling the function
-        cout << "Select an Editor to get Description:\n";
+        cout << "\t\t\t  Select an Editor to get the Description:\n\n";
         for (unsigned int q = 0; q < Editors.size(); q++) {
-            cout << endl << q + 1 << " - " << Editors[q]->getEname() << endl;
+            cout <<"\t\t\t"<< q + 1 << " - " << Editors[q]->getEname() << " $"<< Editors[q]->getTotalPrice() << endl;
         }
-        cout << "Choice: ";
+        cout << "\nChoice: ";
 
         string c;
         cin >> c;
-
         unsigned int w = atoi(c.c_str());
-
         if (w && w <= Editors.size()) {
 
-            cout << "\n\nDisplaying Description...\n\n";
+            cout << "Displaying Description...\n\n";
             Editors[w - 1]->Description();
         }
 
@@ -978,7 +1052,6 @@ void readCompanies() {
 
     if (Database.fail()) { cout << "\nFailed accessing Companies"; }
     else {
-
 
         while (!Database.eof()) {
             string name;
@@ -1004,24 +1077,23 @@ void readUsers() {
     string line;
 
     while (getline(O, line)) {
-        string name, adress, budget, id, phone;
+        string name, id, budget, adress, phone, gpa;
         istringstream ss(line);
-        while (getline(ss, name, ',')) {
-            getline(ss, adress, ',');
-            getline(ss, id, ',');  //User(string n,string ad,string id,string phone, int budget)
-            getline(ss, phone, ',');
-
-            getline(ss, budget);
-
+        while (getline(ss, name, ',')){
+                getline(ss, id, ',');
+                getline(ss, budget, ',');
+                getline(ss, adress, ',');
+                getline(ss, phone, ',');
+                getline(ss, gpa);
             int budgets = atoi(budget.c_str());
-
-            Users.push_back(new User(name, id, budgets, adress, phone));
-                }
+            double GPA = atoi(gpa.c_str());
+            
+            Users.push_back(new User(name,id,budgets,adress,phone,GPA));
+        }
     }
     O.close();
 
 }
-//lAZO ESHT GOMAR :)
 
 void readEditors() {
 
@@ -1033,7 +1105,7 @@ void readEditors() {
     string line;
     while (getline(C, line)) {
 
-        string name,VERSION,id,type, rate, FORMAT,  OSYSTEM, _OriginalSaved, _ColorMode,layers, mf,PortraitCorrection,catalog, masking, traceimage,_vector,SIZE,filter, features,AD, audioformats, montage, effects, motiongraphics, properties, platforms, transitions, story, timeline;
+        string name,VERSION,id,type, FORMAT,  OSYSTEM, _OriginalSaved, _ColorMode,layers, mf,PortraitCorrection,catalog, masking, traceimage,_vector,SIZE,filter, features,AD, audioformats, montage, effects, motiongraphics, properties, platforms, transitions, story, timeline;
         istringstream qs(line);
 
         while (getline(qs, type, ',')) {
@@ -1054,9 +1126,9 @@ void readEditors() {
                 getline(qs, traceimage, ',');
                 getline(qs, _vector);
                 int Layers = atoi(layers.c_str());
-                bool OS=0,PC=0;
-                if(_OriginalSaved=="Yes")OS=1;
-                if(PortraitCorrection=="Yes")PC=1;
+                bool OS=false,PC=false;
+                if(_OriginalSaved=="Yes")OS=true;
+                if(PortraitCorrection=="Yes")PC=true;
 
                 Editors.push_back(new Complex(name, VERSION, id, FORMAT, OSYSTEM,OS,_ColorMode,Layers, mf, PC, catalog, masking, traceimage,_vector));
 
@@ -1089,11 +1161,10 @@ void readEditors() {
                 getline(qs, id, ',');
                 getline(qs, FORMAT, ',');
                 getline(qs, OSYSTEM, ',');
-                getline(qs, AD, ',');
                 getline(qs, audioformats, ',');
-                getline(qs, montage);
-                getline(qs, effects);
-                getline(qs, motiongraphics);
+                getline(qs, montage, ',');
+                getline(qs, effects, ',');
+                getline(qs, motiongraphics, ',');
                 getline(qs, properties);
 
                 Editors.push_back(new SocialMedia(name, VERSION, id, FORMAT, OSYSTEM, audioformats, montage, effects, motiongraphics, properties));
@@ -1107,8 +1178,8 @@ void readEditors() {
                        getline(qs, FORMAT, ',');
                        getline(qs, OSYSTEM, ',');
                        getline(qs, audioformats, ',');
-                       getline(qs, montage);
-                       getline(qs, effects);
+                       getline(qs, montage, ',');
+                       getline(qs, effects, ',');
                        getline(qs, platforms, ',');
                        getline(qs, transitions, ',');
                        getline(qs, story, ',');
@@ -1160,10 +1231,7 @@ void searchBM( string txt, string pat)
 string lowerWord(string temp){
     string toReturn ="";
     for(char x: temp)
-    {
-        toReturn += tolower(x);
-
-    }
+    { toReturn += tolower(x);}
     return toReturn;
 }
 
@@ -1173,42 +1241,122 @@ void importData() {
     readCompanies();
     readEditors();
 }
+void SearchCompanies(){
+    string finder1;
+    cout << "Enter the Company you want to search: \b";
+    cin >> finder1;
+
+    vector<pair<int,Company*> > allCompanies;//used the vecor of pair to sort in decreasiing order
+    //a loop to calculate and display the total prices of all elements in the Items collection
+    for (Company * i : Companies) {
+            string UpperString = i -> getCname();
+            string toFind = finder1;
+            CurrOccurances = 0;
+            toFind = lowerWord(toFind);
+            UpperString =lowerWord(UpperString);
+            searchBM(UpperString,toFind);
+
+
+            if(CurrOccurances>0)
+              allCompanies.push_back(make_pair(CurrOccurances,i));
+
+    }
+    sort(allCompanies.begin(),allCompanies.end()); // sort them from number or occurences
+    reverse(allCompanies.begin(),allCompanies.end()); // start from biggest
+    if(allCompanies.size()==0)cout<<"\n\t\tNo Company with name: "<<finder1<<endl;
+    else cout<<allCompanies.size()<< "\t\t Companies found...\n";
+    for(auto curr: allCompanies){
+      cout<< " \t> "<< curr.second->getCname() <<" ("<< curr.first << ")\t";
+  
+    }
+    
+    string choice;
+    cout<<"\n\n";
+    cout<<"Press 1 to search another Editor or anything to exit: ";
+    cin>>choice;
+    if(choice=="1")SearchCompanies();
+    else OnlineStoreMenu();
+}
+
+
+void SearchEditors(){
+    string finder1;
+    cout << "Enter the Editor you want to search: \b";
+    cin >> finder1;
+
+    vector<pair<int,Editor*> > allEditors;//used the vecor of pair to sort in decreasiing order
+    //a loop to calculate and display the total prices of all elements in the Items collection
+    for (Editor * i : Editors) {
+            string UpperString = i -> getEname();
+            string toFind = finder1;
+            CurrOccurances = 0;
+            toFind = lowerWord(toFind);
+            UpperString =lowerWord(UpperString);
+            searchBM(UpperString,toFind);
+
+
+            if(CurrOccurances>0)
+              allEditors.push_back(make_pair(CurrOccurances,i));
+
+    }
+    sort(allEditors.begin(),allEditors.end()); // sort them from number or occurences
+    reverse(allEditors.begin(),allEditors.end()); // start from biggest
+    if(allEditors.size()==0)cout<<"\n\t\tNo Editor with name: "<<finder1<<endl;
+    else cout<<allEditors.size()<< "\t\tEditors found...\n";
+    for(auto curr: allEditors){
+      cout<< " \t> "<< curr.second->getEname() <<" ("<< curr.first << ")\t";
+      cout<< "  - $"<<curr.second->getTotalPrice()<<endl;
+    }
+    
+    string choice;
+    cout<<"\n\n";
+    cout<<"Press 1 to search another Editor or anything to exit: ";
+    cin>>choice;
+    if(choice=="1")SearchEditors();
+    else OnlineStoreMenu();
+}
 
 
 void OnlineStoreMenu() {
-    cout << "\n\n\t\t  * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n";
-    cout << "\t\t *            Welcome to our online store                *\n";
-    cout << "\t\t* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n ";
     string choice;
+    do {
+        cout << "\n\n\t\t        ▄▀▄▀   WELCOME TO OUR ONLINE STORE   ▀▄▀▄         \n";
+        cout << "\t\t✂--------------------------------------------------------\n";
+        cout << "\t\t│       1-User Menu         │       3-List Editors      │";
+        cout << "\n\t\t│---------------------------│---------------------------│";
+        cout << "\n\t\t│       2-Search            │ 4-List Promoted Companies │";
+        cout << "\n\t\t│---------------------------│---------------------------│\n";
+        cout << "\n\t\t                      ꐕ  0-CLOSE  ꐕ                      \n";
+
+        cout<<"\n\nChoice: ";
+        cin >> choice;
 
 
-       do {
-          // cout << "\n\n" << setw(70) << "[:] Current Web Earnings: $" << WebEarnings << endl;
-           cout << setw(40) << "\n \t\t  1-User Menu"<< setw(32) << "3-List Editors"
-               << "\n\t\t  2-Close" << setw(47) << "4-List Promoted Companies";
-           cout << "\n\t    *                                                       *";
-           cout << "\n\t\t * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n ";
-           cout<<"\n\nChoice: ";
-           cin >> choice;
 
-
-
-           if (choice == "2") {
-               cout<<"\n\n Goodbye!\n\n";
-               }
-
+           if (choice == "0") { cout << "\n\t\t\t\t\t\t\t * Goodbye! *\n\n"; }
            else if (choice == "1") { UserMenu(); cout << "\nENTER to continue..."; cin.ignore(); cin.ignore(); }
            else if (choice == "3") {
-
-               EditorsInfo();
-               OnlineStoreMenu(); cout << "\nENTER to continue..."; cin.ignore(); cin.ignore(); }
-
-           else if (choice == "4") { OnlineStoreMenu(); cout << "\nENTER to continue..."; cin.ignore(); cin.ignore();}
-
+               string choice;
+               do { EditorsInfo();
+                   cout << "\n\n\t\t\tEnter 0 to exit (or any button to continue) > ";
+                   cin>>choice;
+               }
+               while(choice!="0");
+           }
+           else if(choice =="2"){
+               string c;
+               cout<<"Search for companies (1) or Editors (2): ";
+               cin>>c;
+               
+               if(c=="1")SearchCompanies();
+                else if (c=="2")SearchEditors();
+                else OnlineStoreMenu();
+               
+               
+           }
+           else if (choice == "4") { CompanyInfo(); cout << "\nENTER to continue..."; cin.ignore(); cin.ignore();}
            else { cout << "\nInvalid\n"; }
-
        } while (choice != "0");
-
 }
 
 //-----------------------------------------------Main------------------------------------------------------------Main-------------------------------------------------------------------------------------
@@ -1217,7 +1365,7 @@ void OnlineStoreMenu() {
 int main()
 {
 
-    cout << "\n\t\t\t\tPress ENTER to continue\n";
+    cout << "\n\t\t\t\tPress ENTER to continue ツ\n";
     cin.ignore();
 
     importData();
