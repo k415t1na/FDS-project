@@ -34,6 +34,8 @@ vector < Editor* > Editors;
 vector < pair < Editor*, Company* > > FoundApps;
 vector < User* > Users;
 void OnlineStoreMenu();
+
+
 class Company {
 public:
     Company() {
